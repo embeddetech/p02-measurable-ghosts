@@ -1,0 +1,268 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1.0in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage[colorlinks=true,linkcolor=blue!60!black,citecolor=blue!60!black,urlcolor=blue!60!black]{hyperref}
+
+\newcommand{\PT}{\mathcal{PT}}
+\newcommand{\ee}{\mathrm{e}}
+\newcommand{\ii}{\mathrm{i}}
+
+\title{\vspace{-1.2em}Experimental proposal: divisibility onset, generator
+floor, and the backflow--divisibility dissociation in a passive $\PT$
+photonic coupler\vspace{-0.4em}}
+\author{Jonathan Torkelson\\[2pt]
+\small Embeddetech, Inc., Tulsa, Oklahoma, USA \quad
+\texttt{jtorkelson@embeddetech.com}}
+\date{July 11, 2026}
+
+\begin{document}
+\maketitle
+\vspace{-1.5em}
+
+\noindent\textbf{Summary.} We propose a set of measurements on
+femtosecond-laser-written lossy waveguide couplers---the platform of
+Klauck \emph{et al.}~\cite{Klauck2019}---that would extract, for the
+first time, three process-level observables of the classical
+\emph{transition-matrix process} of a $\PT$ dimer: the length $t_c$ at
+which divisibility is first lost (permanently, in the broken phase), the asymptotic generator floor
+$-(a+\tilde\kappa)$ (gain $a\equiv\gamma/2$, $\tilde\kappa\equiv\sqrt{a^2-\kappa^2}$), and the dissociation between
+information-flow Markovianity and divisibility, phase-locked to the
+$\PT$ transition. All three follow with
+no free parameters from the device constants; classical light
+suffices; and the primary observable is exactly invariant under the
+per-launch transmission-calibration errors, the leading multiplicative
+systematic (though not under the dark floor, which must be
+subtracted). A full measurement-chain simulation
+(\texttt{scripts/t2\_measurement\_chain.py}, public) underwrites the error
+budget quoted below.
+
+\paragraph{Theory targets.} Write the coupler as the dimer
+$H=\cos\theta\,\mathbf{1}+\ii\sin\theta\,\sigma_z+s\,\sigma_x$; the
+passive device with coupling $\kappa$ [cm$^{-1}$] and single-guide
+loss rate $\gamma$ [cm$^{-1}$, amplitude convention, $\PT$-breaking at
+$\gamma=2\kappa$~\cite{Klauck2019}] realizes $s\to\kappa$,
+$\sin\theta\to a\equiv\gamma/2$, $t\to z$ (propagation length) after
+removing the mean loss. The indivisible-process paper~\cite{indivisible}
+establishes, for the measured
+intensity transfer matrix $\Gamma(z)$ (columns: launch guide; rows:
+output guide; index~1 the low-loss guide):
+\begin{itemize}\setlength\itemsep{0pt}
+\item \emph{Divisibility onset:} P-divisibility first fails at $t_c$,
+with
+$t_c=\tilde\kappa^{-1}\operatorname{arcsinh}\!\bigl(\tilde\kappa/(\kappa\sqrt2)\bigr)$,
+$\tilde\kappa=\sqrt{a^2-\kappa^2}$ (continued to $\arcsin$ in the
+unbroken phase), exactly where $\det\Gamma$ crosses
+zero; in the broken phase ($\gamma>2\kappa$) the resulting
+indivisibility is \emph{permanent} (P-divisible precisely on $[0,t_c)$),
+in the unbroken phase it recurs in
+windows of period $\pi/\sqrt{\kappa^2-a^2}$, and $t_c$ is continuous
+through the exceptional point.
+\item \emph{Generator floor:} in the broken phase the off-diagonal
+generator entry satisfies $L_{12}(z)<-(a+\tilde\kappa)$ for all
+$z>t_c$ and \emph{rises} to the strictly negative constant
+$-(a+\tilde\kappa)$ as $z\to\infty$: a floor on $|L_{12}|$,
+approached from below by the signed entry.
+\item \emph{Dissociation:} on the same data, the survival-conditioned
+total-variation distance between the two launch columns shows
+\emph{negligible} backflow in the late window (for onsets $t_c$
+preceding it) of the broken phase while divisibility fails
+terminally---numerically, the two standard
+notions of non-Markovianity come
+apart, phase-locked to the $\PT$ transition.
+\end{itemize}
+
+\paragraph{Why this is new.} The apparatus exists and is
+characterized as a function of length~\cite{Klauck2019}; exceptional-point
+criticality of information flow has been measured~\cite{Xiao2019}; and
+indivisibility without information backflow has already been observed
+on one tomographic data set---Bernardes \emph{et al.}'s ``weak''
+non-Markovian regime, together with the transition to the strong
+one~\cite{Bernardes2015}. What no experiment has extracted, to our
+knowledge, is a closed-form divisibility-onset \emph{length} or a
+generator \emph{floor}, nor phase-locked the dissociation to a $\PT$
+transition on a passive photonic coupler. Note that Klauck
+\emph{et al.}\ operated well inside the unbroken phase (far from the
+exceptional point at $\gamma/2\kappa=1$); the broken
+phase---where the terminal behavior lives---is unexplored territory
+for these observables.
+
+\paragraph{Devices and protocol.} Fabricate four couplers (D1--D4) spanning three $\PT$ regimes
+(all at $\lambda=815\,$nm in fused silica; loss by sinusoidal
+modulation~\cite{Eichelkraut2014}; per sample, one Hermitian reference
+coupler, one straight reference guide, and one straight modulated-loss
+guide---the latter carrying the device modulation in isolation, so its
+length-resolved transmission pins the loss rate $\gamma$ independently
+of the coupling---on the same chip):
+
+\begin{center}\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lccccc}
+\toprule
+device & $\kappa$ [cm$^{-1}$] & $\gamma$ [cm$^{-1}$] & regime &
+predicted $t_c$ [cm] & predicted floor [cm$^{-1}$] (D3: window period)\\
+\midrule
+D1 & 0.10 & 0.60 & broken ($\gamma/2\kappa=3$) & 5.10 & $-0.583$\\
+D2 & 0.1125 & 0.90 & broken, deeper ($\gamma/2\kappa=4$) & 3.98 & $-0.886$\\
+D3 & 0.50 & 0.30 & unbroken & 1.55 (first window) &
+period $6.59\,$cm\\
+D4 & 0.30 & 0.60 & \emph{at} the EP ($\gamma/2\kappa=1$) &
+2.36 ($=1/\kappa\sqrt2$) & $-0.300$ ($=-a$ asymptote, $\tilde\kappa=0$)\\
+\bottomrule
+\end{tabular}%
+}
+\end{center}
+
+\noindent For each family, a ladder of chip lengths
+$z=0.5,1.0,\dots,10\,$cm (20 samples; Klauck-style
+varying-length sets). At each length, launch classical laser light
+into each guide in turn and record both output intensities relative
+to the straight reference guide: four numbers per length assemble
+$\hat\Gamma(z)$. The required loss rates ($2.6$--$7.8\,$dB/cm power
+loss) are set by the tunable-bending-loss modulation
+technique~\cite{Eichelkraut2014}, which reports radiation losses of
+almost arbitrary amount; we note that the highest loss demonstrated on
+this same platform in~\cite{Klauck2019} is ${\approx}3\,$dB/cm, so D2's
+requirement sits a factor ${\sim}2.6$ above the published
+same-platform record. D2, the deepest working device,
+keeps its whole measurement---onset and floor---within $6\,$cm chips. A single-photon version
+(heralded pairs, as in~\cite{Klauck2019}) would reproduce the numbers
+below at $10^4$ detected photons per launch; entangled-pair
+extensions~\cite{Tang2016,Ehrhardt2022} address the
+conditioning-signal observable treated elsewhere in this program and
+are out of scope here.
+
+\paragraph{Estimators and error budget (simulated).} The
+measurement-chain simulation models per-sample fabrication disorder
+($2\%$ on $\kappa$, $a$), per-launch transmission-calibration error
+($3\%$), photon shot noise, and a $10^{-4}$ dark/crosstalk floor,
+with $400$ Monte Carlo realizations per configuration:
+\begin{itemize}\setlength\itemsep{0pt}
+\item \emph{$t_c$ is calibration-invariant by construction:} the onset
+is estimated from the zero crossing of $\det$ of the
+\emph{column-normalized} transfer matrix, which is exactly invariant
+under per-launch intensity rescalings---an algebraic identity, and the
+simulated calibration-only spread is correspondingly zero.
+Precision at $10^4$ photons/launch: $\pm0.19\,$cm (D1),
+$\pm0.28\,$cm (D2); at $10^6$ with all systematics, $\pm0.09$ and
+$\pm0.06\,$cm (Klauck's HOM-dip benchmark:
+$0.05\,$cm~\cite{Klauck2019}). The dark floor is the one systematic
+this estimator does \emph{not} absorb: it biases the crossing by
+$+0.05\,$cm (D1) and $+0.12\,$cm (D2), and must be subtracted. The
+bias grows with $\gamma/2\kappa$ because the surviving diagonal at
+$t_c$ weakens; by $\gamma/2\kappa\approx5$--$6$ the determinant no
+longer cleanly crosses zero at this dark level and the estimator
+degrades beyond usefulness, its bias and spread exceeding the signal,
+which is what sets D2's depth.
+\item \emph{The floor requires the global fit:} pointwise
+finite-difference generators are fragile where the survival
+probability approaches the dark floor (documented in the script's
+null control). Fitting the closed-form model to the full ladder, with
+per-column calibration nuisances, recovers the floor to $\pm3.4\%$
+(D1) and $\pm4.1\%$ (D2)
+for both broken devices---$29\sigma$ (D1) and $24\sigma$ (D2) below
+zero---already at $10^4$ photons/launch. This is the significance of
+the floor \emph{parameter} under the closed-form model, not a
+model-independent test of permanence.
+\item \emph{Dissociation:} on identical data and analysis, the
+late-window ($z\ge5\,$cm) conditional backflow is $0.018$ (D2, whose
+onset $t_c=3.98\,$cm precedes the window---the clean broken-phase
+instance, dropping to $0.004$ at $10^6$ photons) and $0.015$ (D1, whose
+$t_c=5.10\,$cm sits at the window edge, so this retains the
+theory-predicted onset-neighborhood tail---$\approx0.01$ noiseless,
+$0.009$ as simulated at $10^{6}$, the dark floor slightly suppressing it---%
+rather than pure noise) versus $0.49$ for D3
+(unbroken), while the fitted floor is $\ge24\sigma$ negative for D1/D2:
+the dissociation is resolved with more than an order of magnitude of
+margin.
+\item \emph{Unbroken control:} D3's first window position is
+recovered to $\pm0.03\,$cm and the window period to $\pm2.3\%$,
+confirming the recurrent (non-terminal) signature. (The
+exceptional-point device D4 is not in the simulated budget; continuity
+of $t_c$ through the EP is an analytic property of the closed form, not
+a simulated result here.)
+\item \emph{Two dimensionless points:} $\kappa\,t_c$ and
+$\mathrm{floor}/\kappa$ depend on $\gamma/2\kappa$ alone, so D1 and D2
+test the closed form at $\gamma/2\kappa=3$ and $4$
+($\kappa\,t_c=0.510$ and $0.447$) rather than re-testing one
+prediction at two overall scales.
+\end{itemize}
+
+\paragraph{What a positive result establishes.} These would be the
+first process-level (transition-matrix) observables of $\PT$ dynamics:
+they test the identification of broken-$\PT$ evolution with
+survival-conditioned dynamics of a dilated stochastic process---in
+particular that the broken phase is \emph{backflow-Markovian at
+late lengths yet permanently indivisible}, a prediction with no analogue in the
+quantum-state-based analyses of~\cite{Xiao2019,KAU2017}. A null
+result---most directly, a genuine \emph{restoration} of divisibility
+($\det\hat\Gamma$ crossing back positive) in a resolvable window just
+past $t_c$, a model-independent signal; or a systematic late-window
+lack of fit of the closed form
+(e.g.\ $L_{12}$ relaxing toward zero once its asymptote is freed from
+$(a,\kappa)$ in an extended fit)---would falsify the closed forms and,
+with the device Hamiltonian independently constrained by the on-chip
+reference structures, the dilation reading for this system. The
+restoration test must be read only where the divisor determinant is
+resolvable: since $\det\hat\Gamma\to0^-$ as $z\to\infty$ (survival, and
+with it every intensity, vanishing), a naive late-$z$ sign reading is
+powerless---at the $10^{-4}$ dark level and $10^{4}$ photons per launch
+the measured late-ladder
+determinant flips positive in $79\%$ of realizations even when the closed
+forms hold exactly (falling to $9\%$ at $10^{6}$)---so a genuine restoration must clear the measured
+det noise-plus-dark envelope in the window just past $t_c$, not merely
+change sign at large $z$. The lack-of-fit falsifier is informative
+already at $10^4$ detected photons per launch (an afternoon of data on
+this platform); the model-independent restoration test additionally
+requires photons enough to resolve $\det\hat\Gamma$ above the dark
+floor across that window.
+
+\medskip
+\noindent\textbf{Provenance.} Prepared with the large language model
+Claude Fable~5 (Anthropic), directed by the author; simulation and
+error budget reproducible from
+\texttt{scripts/t2\_measurement\_chain.py} in the public repository
+\url{https://github.com/embeddetech/p02-measurable-ghosts}
+(also archived in the program hub,
+\url{https://github.com/embeddetech/ghosts-program}).
+
+\begin{thebibliography}{9}\small
+\bibitem{indivisible}
+J.~Torkelson,
+\emph{Indivisible stochastic processes for non-Hermitian and
+higher-derivative quantum systems: detailed balance, broken $\PT$
+symmetry, and the explosion of ghosts},
+paper~1 of this program, repository
+\url{https://github.com/embeddetech/p01-indivisible-ghosts}
+(2026).
+\bibitem{Klauck2019} F.~Klauck \emph{et al.},
+\emph{Observation of $\PT$-symmetric quantum interference},
+Nat.\ Photonics \textbf{13}, 883 (2019),
+\href{https://arxiv.org/abs/1904.08135}{arXiv:1904.08135}.
+\bibitem{Eichelkraut2014} T.~Eichelkraut \emph{et al.},
+\emph{Radiation-loss management in modulated waveguides},
+Opt.\ Lett.\ \textbf{39}, 6831 (2014).
+\bibitem{Xiao2019} L.~Xiao \emph{et al.},
+\emph{Observation of critical phenomena in parity-time-symmetric
+quantum dynamics}, Phys.\ Rev.\ Lett.\ \textbf{123}, 230401 (2019).
+\bibitem{Bernardes2015} N.~K.~Bernardes \emph{et al.},
+\emph{Experimental observation of weak non-Markovianity},
+Sci.\ Rep.\ \textbf{5}, 17520 (2015).
+\bibitem{Tang2016} J.-S.~Tang \emph{et al.},
+\emph{Experimental investigation of the no-signalling principle in
+parity--time symmetric theory using an open quantum system},
+Nat.\ Photonics \textbf{10}, 642 (2016).
+\bibitem{Ehrhardt2022} M.~Ehrhardt, M.~Heinrich, and A.~Szameit,
+\emph{Observation-dependent suppression and enhancement of two-photon
+coincidences by tailored losses},
+Nat.\ Photonics \textbf{16}, 191 (2022).
+\bibitem{KAU2017} K.~Kawabata, Y.~Ashida, and M.~Ueda,
+\emph{Information retrieval and criticality in parity-time-symmetric
+systems}, Phys.\ Rev.\ Lett.\ \textbf{119}, 190401 (2017).
+\end{thebibliography}
+
+\end{document}
